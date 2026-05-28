@@ -1,0 +1,90 @@
+# ============================================
+# .gitignore — GestorDocs Frontend
+# Todo lo que está aquí NO se sube a GitHub
+# ============================================
+
+
+# ── 1. DEPENDENCIAS ─────────────────────────
+# La carpeta node_modules pesa cientos de MB
+# y se regenera con "npm install".
+# NUNCA se sube al repositorio.
+node_modules/
+
+
+# ── 2. VARIABLES DE ENTORNO ─────────────────
+# Aquí están las URLs de los microservicios
+# y datos sensibles. NUNCA se suben.
+# El .env.example SÍ se sube (es la plantilla).
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+
+# ── 3. ARCHIVOS DE BUILD DE NEXT.JS ─────────
+# Carpeta que genera Next.js al compilar.
+# Se regenera con "npm run build".
+.next/
+out/
+
+
+# ── 4. CACHÉ Y ARCHIVOS TEMPORALES ──────────
+# Archivos que Next.js genera automáticamente
+# para optimizar el rendimiento en desarrollo.
+.next/cache/
+
+
+# ── 5. SISTEMA OPERATIVO ─────────────────────
+# Archivos que crea Windows/Mac/Linux
+# que no tienen nada que ver con el código.
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+
+# ── 6. EDITORES DE CÓDIGO ────────────────────
+# Configuraciones locales de VS Code u otros
+# editores que son personales de cada quien.
+
+# VS Code (algunos sí se pueden subir, ver abajo)
+.vscode/settings.json
+.vscode/launch.json
+
+# JetBrains (WebStorm, IntelliJ)
+.idea/
+
+# Vim
+*.swp
+*.swo
+
+
+# ── 7. LOGS Y ERRORES ────────────────────────
+# Archivos de registro que genera Node/npm.
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+
+# ── 8. ARCHIVOS DE PRUEBAS ───────────────────
+# Reportes de cobertura de pruebas.
+coverage/
+.nyc_output/
+
+
+# ── 9. MISCELÁNEOS ───────────────────────────
+# Archivos de bloqueo alternativos
+# (el proyecto usa npm, no yarn ni pnpm)
+yarn.lock
+pnpm-lock.yaml
