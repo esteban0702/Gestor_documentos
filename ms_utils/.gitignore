@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+uploads/
+env/
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment/config files
+.env
+.env.*
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+
+# Logs and local databases
+*.log
+*.sqlite3
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
