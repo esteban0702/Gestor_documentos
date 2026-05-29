@@ -1,0 +1,30 @@
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL no está configurada en el .env")
+
+# connect_args exige SSL a nivel de driver (refuerza el ?sslmode=require de la URL)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"sslmode": "require"},
+    pool_pre_ping=True,   # detecta conexiones muertas automáticamente
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+def get_db():
+    """Dependencia FastAPI: abre y cierra sesión de BD por cada request."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
