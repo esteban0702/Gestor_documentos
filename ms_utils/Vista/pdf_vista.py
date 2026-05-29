@@ -11,16 +11,73 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
-# Devuelve un mensaje simple para confirmar que el microservicio está activo.
+# Devuelve un mensaje simple para confirmar que el microservicio esta activo.
 @pdf_bp.route("/")
 def inicio():
-    return jsonify({"mensaje": "Microservicio de extracción de texto de PDF"})
+    return jsonify({"mensaje": "Microservicio de extraccion de texto de PDF"})
 
 
-# Recibe el PDF, valida acceso y archivo, y retorna el texto extraído con sus metadatos.
+# Recibe el PDF, valida acceso y archivo, y retorna el texto extraido con sus metadatos.
 @pdf_bp.route("/api/utils", methods=["POST"])
 @token_requerido
 def leer_pdf():
+    
+    """
+    Procesa un PDF y extrae texto nativo y OCR.
+    ---
+    tags:
+      - Utils
+    consumes:
+      - multipart/form-data
+    produces:
+      - application/json
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: Authorization
+        in: header
+        type: string
+        required: true
+        description: JWT en formato Bearer <token>
+      - name: archivo
+        in: formData
+        type: file
+        required: true
+        description: Archivo PDF a procesar
+    responses:
+      200:
+        description: Procesamiento exitoso
+        schema:
+          type: object
+          properties:
+            archivo:
+              type: string
+              example: mi_documento.pdf
+            paginas:
+              type: integer
+              example: 3
+            imagenes_procesadas:
+              type: integer
+              example: 2
+            texto:
+              type: string
+              example: Texto extraido del PDF y OCR...
+      400:
+        description: Archivo faltante o invalido
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      401:
+        description: Token JWT ausente, invalido o expirado
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
+
     archivo = request.files.get("archivo")
     nombre_archivo, mensaje_error, status_code = validar_archivo_pdf(archivo)
     if mensaje_error:
@@ -35,5 +92,5 @@ def leer_pdf():
         "archivo": nombre_archivo,
         "paginas": resultado.paginas,
         "imagenes_procesadas": resultado.imagenes_procesadas,
-        "texto": resultado.texto
+        "texto": resultado.texto,
     })

@@ -110,6 +110,17 @@ Abre en el navegador:
 - http://127.0.0.1:5000
 - o el puerto que hayas configurado
 
+## 5.1 Documentación Swagger
+
+Con el servicio levantado, abre:
+
+- http://127.0.0.1:5000/apidocs
+
+En Swagger UI puedes probar el endpoint /api/utils enviando:
+
+- Header Authorization con formato: Bearer <token>
+- Form-data con el campo archivo (PDF)
+
 ## 6. Desactivar entorno virtual
 
 Cuando termines:
@@ -135,7 +146,7 @@ Resumen de funcionalidades y componentes implementados.
 | Seguridad | Autenticación JWT entre servicios | OK |
 | Helpers | Protección de puertos y manejo de errores por defecto | Pendiente |
 | Respuesta HTTP | Retornar 404 cuando la petición es incorrecta | Pendiente |
-| Documentación API | Swagger de los microservicios | Pendiente |
+| Documentación API | Swagger de los microservicios | OK |
 
 ### Notas por módulo
 
