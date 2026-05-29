@@ -2,7 +2,7 @@ import os
 
 from flask import Blueprint, jsonify, request
 
-from Controlador.pdf_controlador import autenticacion_basica_valida, extraer_texto_pdf, obtener_respuesta_no_autorizado, validar_archivo_pdf
+from Controlador.pdf_controlador import extraer_texto_pdf, token_requerido, validar_archivo_pdf
 
 # Define el blueprint que expone las rutas del microservicio.
 pdf_bp = Blueprint("pdf", __name__)
@@ -19,15 +19,8 @@ def inicio():
 
 # Recibe el PDF, valida acceso y archivo, y retorna el texto extraído con sus metadatos.
 @pdf_bp.route("/api/utils", methods=["POST"])
+@token_requerido
 def leer_pdf():
-    if not autenticacion_basica_valida(request.authorization):
-        payload, status_code, headers = obtener_respuesta_no_autorizado()
-        respuesta = jsonify(payload)
-        respuesta.status_code = status_code
-        for llave, valor in headers.items():
-            respuesta.headers[llave] = valor
-        return respuesta
-
     archivo = request.files.get("archivo")
     nombre_archivo, mensaje_error, status_code = validar_archivo_pdf(archivo)
     if mensaje_error:

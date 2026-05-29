@@ -1,35 +1,70 @@
 import io
 import os
+from functools import wraps
 from typing import Any
 
 import fitz
+import jwt
 import pytesseract
+from flask import jsonify, request
 from PIL import Image
 from werkzeug.utils import secure_filename
 
 from Modelo.pdf_modelo import ResultadoPDF
 
 
-API_KEY = "utils_remington"
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "utils_remington")
+JWT_ALGORITHM = "HS256"
 ALLOWED_EXTENSIONS = {"pdf"}
 
 
 # Construye la respuesta JSON y los encabezados cuando la autenticación falla.
 def obtener_respuesta_no_autorizado() -> tuple[dict[str, str], int, dict[str, str]]:
     return (
-        {"error": "No autorizado. Credenciales Basic invalidas."},
+        {"error": "No autorizado. Token JWT invalido o ausente."},
         401,
-        {"WWW-Authenticate": 'Basic realm="Microservicio PDF"'}
+        {"WWW-Authenticate": 'Bearer realm="Microservicio PDF"'}
     )
 
 
-# Verifica que el usuario enviado por autenticación básica coincida con la API key esperada.
-def autenticacion_basica_valida(auth: Any) -> bool:
-    if not auth:
+# Verifica que el token JWT enviado en el header Authorization sea válido.
+def autenticacion_jwt_valida(authorization_header: Any) -> bool:
+    if not authorization_header:
         return False
 
-    # Se usa api_key como usuario en autenticacion basica.
-    return auth.username == API_KEY
+    if not isinstance(authorization_header, str):
+        return False
+
+    if not authorization_header.startswith("Bearer "):
+        return False
+
+    token = authorization_header.split(" ", 1)[1].strip()
+    if not token:
+        return False
+
+    try:
+        jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+        return True
+    except jwt.ExpiredSignatureError:
+        return False
+    except jwt.InvalidTokenError:
+        return False
+
+
+def token_requerido(funcion: Any) -> Any:
+    @wraps(funcion)
+    def decorador(*args: Any, **kwargs: Any) -> Any:
+        if not autenticacion_jwt_valida(request.headers.get("Authorization")):
+            payload, status_code, headers = obtener_respuesta_no_autorizado()
+            respuesta = jsonify(payload)
+            respuesta.status_code = status_code
+            for llave, valor in headers.items():
+                respuesta.headers[llave] = valor
+            return respuesta
+
+        return funcion(*args, **kwargs)
+
+    return decorador
 
 
 # Valida que el archivo recibido exista, tenga nombre, extensión PDF y MIME type correcto.

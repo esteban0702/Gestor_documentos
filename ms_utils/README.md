@@ -20,7 +20,7 @@ Este microservicio sigue una estructura MVC simple para mantener separadas las r
 ### Flujo de procesamiento
 
 1. El cliente envía POST a /api/utils con multipart/form-data y campo archivo.
-2. Se valida autenticación básica mediante API Key.
+2. Se valida autenticación mediante JWT en el header Authorization: Bearer <token>.
 3. Se valida que el archivo sea PDF válido.
 4. El archivo se guarda en uploads/.
 5. Se extrae texto:
@@ -43,7 +43,7 @@ Este microservicio sigue una estructura MVC simple para mantener separadas las r
 
 ### Respuestas de error comunes
 
-- 401: No autorizado (credenciales Basic inválidas).
+- 401: No autorizado (token JWT ausente, inválido o expirado).
 - 400: archivo faltante, sin nombre o no PDF válido.
 
 ## Requisitos
@@ -132,7 +132,7 @@ Resumen de funcionalidades y componentes implementados.
 | Arquitectura | Patrón MVC | OK |
 | Estructura | 3 módulos (Modelo, Vista, Controlador) | OK |
 | Validaciones | Verificar tipos/formato de archivos de entrada esperados | OK |
-| Seguridad | API Key para autenticación básica entre servicios | Pendiente |
+| Seguridad | Autenticación JWT entre servicios | OK |
 | Helpers | Protección de puertos y manejo de errores por defecto | Pendiente |
 | Respuesta HTTP | Retornar 404 cuando la petición es incorrecta | Pendiente |
 | Documentación API | Swagger de los microservicios | Pendiente |
@@ -141,7 +141,7 @@ Resumen de funcionalidades y componentes implementados.
 
 - Validaciones:
 	- Los archivos de entrada deben ser los esperados.
-	- Se requiere una API Key para autenticación básica entre servicios.
+	- Se requiere un JWT válido en el header Authorization.
 - Helpers:
 	- Protección de puertos.
 	- Manejo de errores por defecto (por ejemplo, 404 para peticiones incorrectas).
