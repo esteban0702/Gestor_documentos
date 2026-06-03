@@ -22,8 +22,13 @@ venv/
 # Common upload/temp artifacts
 uploads/
 
+
 # IDE/OS
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
+
+# JavaScript/Node.js
+node_modules/
+.next/

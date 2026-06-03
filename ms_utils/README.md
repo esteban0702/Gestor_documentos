@@ -100,7 +100,7 @@ python -m flask --app main run --host 127.0.0.1 --port 5000
 Ejemplo en otro puerto (8000):
 
 ```powershell
-python -m flask --app main run --host 127.0.0.1 --port 8000
+python -m flask --app main run --host 127.0.0.1 --port 8003
 ```
 
 ## 5. Verificar que el servicio está corriendo
@@ -147,6 +147,10 @@ Resumen de funcionalidades y componentes implementados.
 | Helpers | Protección de puertos y manejo de errores por defecto | Pendiente |
 | Respuesta HTTP | Retornar 404 cuando la petición es incorrecta | Pendiente |
 | Documentación API | Swagger de los microservicios | OK |
+
+## Ruta swagger
+
+http://127.0.0.1:8003/apidocs/
 
 ### Notas por módulo
 
