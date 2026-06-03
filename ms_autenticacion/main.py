@@ -10,7 +10,6 @@ from app.services.security import (
     create_access_token
 )
 
-<<<<<<< HEAD
 # ── Rutas ─────────────────────────────────────────────────────────────────────
 app.include_router(auth_router)
 
@@ -50,12 +49,6 @@ app.openapi = custom_openapi
 Base.metadata.create_all(bind=engine)
 
 # ── App ───────────────────────────────────────────────────────────────────────
-=======
-# ─────────────────────────────────────────────────────────────────────────────
-# APP
-# ─────────────────────────────────────────────────────────────────────────────
-
->>>>>>> 793c7f13c200b582e905d8dc36b727ad689bfd0c
 app = FastAPI(
     title="ms_autenticacion — GestorDocs",
     description="""
@@ -70,14 +63,7 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-<<<<<<< HEAD
 # ── CORS: necesario para preflight OPTIONS del frontend ─────────────────────
-=======
-# ─────────────────────────────────────────────────────────────────────────────
-# CORS
-# ─────────────────────────────────────────────────────────────────────────────
-
->>>>>>> 793c7f13c200b582e905d8dc36b727ad689bfd0c
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
