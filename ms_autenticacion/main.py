@@ -27,15 +27,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# ── CORS ──────────────────────────────────────────────────────────────────────
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # ── Rutas ─────────────────────────────────────────────────────────────────────
 app.include_router(auth_router)
 
@@ -92,12 +83,14 @@ Valida credenciales contra PostgreSQL (Supabase) y emite tokens JWT.
     redoc_url="/redoc",
 )
 
-# ── CORS: permite peticiones del frontend de Esteban ─────────────────────────────
+# ── CORS: necesario para preflight OPTIONS del frontend ─────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",   # frontend Next.js local
+        "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "http://192.168.20.30:3000",
+        "http://192.168.20.39:3000",
     ],
     allow_credentials=True,
     allow_methods=["*"],

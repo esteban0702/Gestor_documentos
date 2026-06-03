@@ -9,7 +9,8 @@ from app.views.schemas import (
 )
 from app.services.security import (
     verify_password, get_password_hash,
-    create_access_token, get_current_user
+    create_access_token, get_current_user,
+    decode_base64_if_needed,
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -25,20 +26,25 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 def register(user: UserCreate, db: Session = Depends(get_db)):
     """Crea un nuevo usuario con la contraseña hasheada."""
 
+    usuario = decode_base64_if_needed(user.usuario)
+    contrasena = decode_base64_if_needed(user.contrasena)
+
     # Verificar duplicado
-    if db.query(User).filter(User.usuario == user.usuario).first():
+    if db.query(User).filter(User.usuario == usuario).first():
         raise HTTPException(status_code=400, detail="El usuario ya está registrado.")
 
     new_user = User(
-        usuario    = user.usuario,
+        usuario    = usuario,
         nombre     = user.nombre,
-        contrasena = get_password_hash(user.contrasena),
+        contrasena = get_password_hash(contrasena),
         perfil     = user.perfil,
     )
+    
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
+
 
 
 # ── POST /auth/login ──────────────────────────────────────────────────────────
@@ -48,6 +54,10 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     summary="Iniciar sesión — devuelve JWT",
 )
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
+    usuario = decode_base64_if_needed(credentials.usuario)
+    password = decode_base64_if_needed(credentials.password)
+
+    print(f"Intento de login para usuario: {usuario}")
     """
     Valida usuario y contraseña contra la BD.
     Devuelve el JWT y los datos básicos del usuario.
@@ -55,9 +65,9 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
     El frontend de Esteban espera exactamente:
     { "token": "...", "usuario": { "id": ..., "nombre": ..., "rol": ... } }
     """
-    user = db.query(User).filter(User.usuario == credentials.usuario).first()
+    user = db.query(User).filter(User.usuario == usuario).first()
 
-    if not user or not verify_password(credentials.password, user.contrasena):
+    if not user or not verify_password(password, user.contrasena):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Usuario o contraseña incorrectos.",

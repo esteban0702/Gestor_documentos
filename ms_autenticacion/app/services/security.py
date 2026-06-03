@@ -1,4 +1,6 @@
 import os
+import base64
+import binascii
 from datetime import datetime, timedelta, timezone
 import jwt
 from passlib.context import CryptContext
@@ -27,6 +29,29 @@ def verify_password(plain: str, hashed: str) -> bool:
 def get_password_hash(password: str) -> str:
     """Hashea la contraseña con bcrypt antes de guardarla."""
     return pwd_context.hash(password)
+
+
+def decode_base64_if_needed(value: str) -> str:
+    """
+    Decodifica una cadena Base64 UTF-8 si corresponde.
+    Si no es Base64 válido, retorna el valor original para mantener compatibilidad.
+    """
+    if value is None:
+        return value
+
+    candidate = value.strip()
+    if not candidate:
+        return candidate
+
+    try:
+        decoded_bytes = base64.b64decode(candidate, validate=True)
+        # Evita falsos positivos: solo se considera Base64 si redondea exactamente.
+        roundtrip = base64.b64encode(decoded_bytes).decode("ascii")
+        if roundtrip != candidate:
+            return value
+        return decoded_bytes.decode("utf-8")
+    except (binascii.Error, ValueError, UnicodeDecodeError):
+        return value
 
 
 # ── JWT ───────────────────────────────────────────────────────────────────────
