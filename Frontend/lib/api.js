@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 
 // ── Instancias por microservicio ─────────────────────────────
 const authApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_AUTH_API_URL || 'http://localhost:8001',
+  baseURL: process.env.NEXT_PUBLIC_AUTH_API_URL || 'http://192.168.20.39:8001',
   timeout: 10_000,
   headers: { 'Content-Type': 'application/json' },
 });
