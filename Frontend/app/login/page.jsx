@@ -28,6 +28,14 @@ export default function LoginPage() {
     if (isAuthenticated()) router.replace('/dashboard');
   }, [router]);
 
+  const encodeBase64 = (value) => {
+    try {
+      return window.btoa(unescape(encodeURIComponent(value)));
+    } catch {
+      return window.btoa(value);
+    }
+  };
+
   useEffect(() => {
     if (searchParams.get('expired') === 'true') {
       toast.error('Tu sesión expiró. Inicia sesión de nuevo.');
@@ -49,7 +57,11 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const { data } = await authService.login(form);
+      const payload = {
+        usuario: encodeBase64(form.usuario.trim()),
+        password: encodeBase64(form.password),
+      };
+      const { data } = await authService.login(payload);
       saveSession(data.token, data.usuario);
       toast.success(`¡Bienvenido, ${data.usuario.nombre}!`);
       router.replace(searchParams.get('redirect') || '/dashboard');

@@ -16,7 +16,7 @@ export function saveSession(token, userData) {
   // secure:true en producción (HTTPS), sameSite evita CSRF
   Cookies.set(TOKEN_KEY, token, {
     expires,
-    sameSite: 'Strict',
+    sameSite: 'Lax',
     secure: process.env.NODE_ENV === 'production',
   });
   Cookies.set(USER_KEY, JSON.stringify(userData), {

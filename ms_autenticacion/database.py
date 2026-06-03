@@ -8,21 +8,30 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL no está configurada en el .env")
+    print("ADVERTENCIA: DATABASE_URL no configurada")
+    engine = None
+else:
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"sslmode": "require"},
+        pool_pre_ping=True,
+    )
 
-# connect_args exige SSL a nivel de driver (refuerza el ?sslmode=require de la URL)
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"sslmode": "require"},
-    pool_pre_ping=True,   # detecta conexiones muertas automáticamente
-)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+if engine:
+    SessionLocal = sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=engine
+    )
+else:
+    SessionLocal = None
 Base = declarative_base()
 
 
 def get_db():
-    """Dependencia FastAPI: abre y cierra sesión de BD por cada request."""
+    if not SessionLocal:
+        raise RuntimeError("Base de datos no configurada")
+
     db = SessionLocal()
     try:
         yield db
